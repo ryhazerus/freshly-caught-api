@@ -37,7 +37,7 @@
 </p>
 
 ## 👨🏻‍💻 About the project
-Freshly Caught started out as a basic idea to promot projects created and being developed by the people of Curacao, wether they are currently living in Curacao or anywhere on the plat this website contains the projects they're currently working on. To see the **web client**, click here: [freshlycaught.io](https://freshlycaught.io)</br>
+Freshly Caught started out as a basic idea to promote projects created and being developed by the people of Curacao, wether they are currently living in Curacao or anywhere on the planet, this website contains the projects they're currently working on. To see the **web client**, click here: [freshlycaught.io](https://freshlycaught.io)</br>
 
 ## 🚀 Technologies
 

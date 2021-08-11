@@ -33,7 +33,7 @@ router.post('/vote', auth, async (req, res) => {
 router.post('/unvote', auth, async (req, res) => {
   try {
     const find = await Vote.find({ $and: [{ project_id: req.body.project_id }, { user_id: req.body.user_id }] });
-    if (find.length) {
+    if (!find.length) {
       throw new Error('Project already unliked');
     }
     const unvote = await Vote.deleteOne({ $and: [{ project_id: { $eq: req.body.project_id } }, { user_id: { $eq: req.body.user_id } }] });
