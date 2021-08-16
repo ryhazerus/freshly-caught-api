@@ -6,6 +6,9 @@ const { check } = require('express-validator');
 const Project = require('../models/project.model');
 const auth = require('../middleware/auth.middleware');
 
+const { redisCacheProjects, redisCacheNewestProjects, redisCacheTopProjects } = require('../middleware/reddis.middleware');
+const cache = require('../cache/redis.connection');
+
 const extractUserToken = (req) => {
   if (req.headers.authorization) {
     return jwt.verify(req.headers.authorization.split('Bearer ')[1], process.env.JWT_KEY);
@@ -43,7 +46,7 @@ router.get('/search/:query/:page', async (req, res) => {
   }
 });
 
-router.get('/page/:page', [check('page').isNumeric().trim().escape()], async (req, res) => {
+router.get('/page/:page', redisCacheProjects, cache.route(), [check('page').isNumeric().trim().escape()], async (req, res) => {
   try {
     const page = parseInt(req.params.page);
     const user = extractUserToken(req);
@@ -53,7 +56,7 @@ router.get('/page/:page', [check('page').isNumeric().trim().escape()], async (re
   }
 });
 
-router.get('/newest/:page', [check('page').isNumeric().trim().escape()], async (req, res) => {
+router.get('/newest/:page', redisCacheNewestProjects, cache.route(), [check('page').isNumeric().trim().escape()], async (req, res) => {
   try {
     const page = parseInt(req.params.page);
     const user = extractUserToken(req);
@@ -63,7 +66,7 @@ router.get('/newest/:page', [check('page').isNumeric().trim().escape()], async (
   }
 });
 
-router.get('/top/:page', [check('page').isNumeric().trim().escape()], async (req, res) => {
+router.get('/top/:page', redisCacheTopProjects, cache.route(), [check('page').isNumeric().trim().escape()], async (req, res) => {
   try {
     const page = parseInt(req.params.page);
     const user = extractUserToken(req);
