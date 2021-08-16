@@ -1,10 +1,6 @@
-var cache = require('express-redis-cache')
+var cache = require('express-redis-cache');
+const redis = require("redis");
 
-var client = cache({
-    host: process.env.REDIS_HOST,
-    port: process.env.REDIS_PORT,
-    auth_pass: process.env.REDIS_PASSWORD,
-    expire: 5000
-});
+var client = cache(redis.createClient(process.env.REDIS_URL));
 
 module.exports = client;
