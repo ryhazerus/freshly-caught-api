@@ -11,7 +11,20 @@ const app = require('../../app');
 const UserModel = require('../../models/user.model');
 const MockUserFixture = require('../fixtures/user.fixture.json');
 
-describe("/api/v1/users", () => {
+describe("auth: /api/v1/users", () => {
+
+    let token = undefined;
+
+    before(function (done) {
+        request(url)
+            .post('/user/token')
+            .send({ _id: user1._id, password: user1.password })
+            .end(function (err, res) {
+                token = res.body.token; // Or something
+                done();
+            });
+    });
+
     beforeAll(done => {
         server = http.createServer(app);
         server.listen(done);
