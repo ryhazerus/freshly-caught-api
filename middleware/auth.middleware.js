@@ -1,29 +1,24 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/user.model');
 
+const getProvidedUsertoken = (authorization) => {
+  if (authorization && authorization.includes('Bearer ')) {
+    return authorization.replace('Bearer ', '');
+  } else {
+    throw new Error('Not authorized to accces this resource, token format is invalid.');
+  }
+};
 
-const tokenIsExpired = (exp) => {
-  return Date.now() >= exp * 1000;
+const getUserFromDatabase = async function (verifiedUserToken, providedUserToken) {
+  let user = await User.findOne({ _id: verifiedUserToken._id, 'tokens.token': providedUserToken });
+  return !user ? new Error('Not authorized to accces this resource.') : user;
 };
 
 const auth = async (req, res, next) => {
   try {
-    if (!req.header('Authorization')) {
-      throw new Error('Request needs to have an Authorization token.');
-    }
-
-    const providedUserToken = req.header('Authorization').replace('Bearer ', '');
-
-    if (tokenIsExpired(providedUserToken)) {
-      throw new Error('Not authorized to accces this resource, token expired');
-    }
-    
-    const verfiedToken = jwt.verify(providedUserToken, process.env.JWT_KEY);
-    const user = await User.findOne({ _id: verfiedToken._id, 'tokens.token': providedUserToken });
-
-    if (!user) {
-      throw new Error('Not authorized to accces this resource.');
-    }
+    const providedUserToken = getProvidedUsertoken(req.header('Authorization'));
+    const verifiedUserToken = jwt.verify(providedUserToken, process.env.JWT_KEY);
+    const user = await getUserFromDatabase(verifiedUserToken, providedUserToken);
 
     req.user = user;
     req.token = providedUserToken;
