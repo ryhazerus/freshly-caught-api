@@ -1,6 +1,11 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/user.model');
 
+
+const tokenIsExpired = (exp) => {
+  return Date.now() >= exp * 1000;
+};
+
 const auth = async (req, res, next) => {
   try {
     if (!req.header('Authorization')) {
@@ -8,6 +13,11 @@ const auth = async (req, res, next) => {
     }
 
     const providedUserToken = req.header('Authorization').replace('Bearer ', '');
+
+    if (tokenIsExpired(providedUserToken)) {
+      throw new Error('Not authorized to accces this resource, token expired');
+    }
+    
     const verfiedToken = jwt.verify(providedUserToken, process.env.JWT_KEY);
     const user = await User.findOne({ _id: verfiedToken._id, 'tokens.token': providedUserToken });
 
