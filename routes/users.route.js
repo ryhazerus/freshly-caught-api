@@ -1,4 +1,5 @@
 const express = require('express');
+const { check, body, validationResult } = require('express-validator');
 
 const router = express.Router();
 const _ = require('lodash');
@@ -6,17 +7,20 @@ const _ = require('lodash');
 const auth = require('../middleware/auth.middleware');
 const User = require('../models/user.model');
 
-router.post('/register', async (req, res) => {
-  try {
-    let user = new User(req.body);
-    await user.save();
-    const token = await user.generateAuthToken();
-    user = CleanUser(user);
-    res.status(201).send({ user, token });
-  } catch (error) {
-    res.status(400).send({ error: 'Error occurred during registration' });
-  }
-});
+router.post('/register',
+  check('username').exists(), body('password').exists(), body('email').exists().isEmail(),
+  async (req, res) => {
+    try {
+      validationResult(req).throw();
+      let user = new User(req.body);
+      await user.save();
+      const token = await user.generateAuthToken();
+      user = CleanUser(user);
+      res.status(201).send({ user, token });
+    } catch (error) {
+      res.status(400).send({ error: 'Error occurred during registration' });
+    }
+  });
 
 router.post('/login', async (req, res) => {
   try {
@@ -25,7 +29,7 @@ router.post('/login', async (req, res) => {
     if (!user) { throw Error('Login failed, check credentials'); }
     const token = await user.generateAuthToken();
     user = CleanUser(user);
-    res.status(201).send({ user, token });
+    res.status(200).send({ user, token });
   } catch (error) {
     res.status(500).send({ error: error.message || 'Error occured during login' });
   }

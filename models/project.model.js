@@ -1,9 +1,8 @@
 const mongoose = require('mongoose');
 const _ = require('lodash');
 
-
-const resizeImage = require('../utilities/imageProcessing');
-const sortType = require('../utilities/sortType');
+const resizeImage = require('../utilities/image_processing.util');
+const sortType = require('../utilities/sort_category.enum');
 const Vote = require('./vote.model');
 
 // Pagination Configuration
