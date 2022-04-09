@@ -23,7 +23,7 @@ const auth = async (req, res, next) => {
     req.user = user;
     req.token = providedUserToken;
   } catch (error) {
-    res.status(401).send({ error: error.message || 'Invalid token provided' });
+    res.status(401).send({ error: error.message || 'Invalid  or expired token provided' });
   } finally {
     next();
   }

@@ -2,7 +2,6 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const router = express.Router();
 const { check } = require('express-validator');
-
 const Project = require('../models/project.model');
 const auth = require('../middleware/auth.middleware');
 
